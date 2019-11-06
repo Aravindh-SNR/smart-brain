@@ -1,0 +1,61 @@
+.form {
+    padding: 30px;
+    width: 450px;
+    margin: 0 auto;
+    border-radius: 5px;
+    background:
+    radial-gradient(circle farthest-side at 0% 50%,#fb1 23.5%,rgba(240,166,17,0) 0)21px 30px,
+    radial-gradient(circle farthest-side at 0% 50%,#B71 24%,rgba(240,166,17,0) 0)19px 30px,
+    linear-gradient(#fb1 14%,rgba(240,166,17,0) 0, rgba(240,166,17,0) 85%,#fb1 0)0 0,
+    linear-gradient(150deg,#fb1 24%,#B71 0,#B71 26%,rgba(240,166,17,0) 0,rgba(240,166,17,0) 74%,#B71 0,#B71 76%,#fb1 0)0 0,
+    linear-gradient(30deg,#fb1 24%,#B71 0,#B71 26%,rgba(240,166,17,0) 0,rgba(240,166,17,0) 74%,#B71 0,#B71 76%,#fb1 0)0 0,
+    linear-gradient(90deg,#B71 2%,#fb1 0,#fb1 98%,#B71 0%)0 0 #fb1;
+    background-size: 40px 60px;
+}
+
+.form-content {
+    display: flex;
+}
+
+.form-content > input {
+    flex-grow: 1;
+}
+
+.form-content > button {
+    flex-grow: 0.5;
+}
+
+.form-content > * {
+    padding: 5px;
+    border-radius: 3px;
+}
+
+button {
+    background: #b536e2;
+    border-color: #b536e2;
+    color: white;
+}
+
+button:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 526px) {
+    p {
+        padding: 0 10px;
+    }
+
+    .form {
+        width: 300px;
+    }
+
+    .form-content {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 400px) {
+    .form {
+        width: 200px;
+    }
+}

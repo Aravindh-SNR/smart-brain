@@ -1,0 +1,33 @@
+.image-box {
+    position: relative;
+    width: 500px;
+    margin: 0 auto;
+}
+
+.image-box img {
+    width: 500px;
+    height: auto;
+}
+
+.face-box {
+    position: absolute;
+    box-shadow: 0 0 0 3px #149df2 inset;
+}
+
+@media (max-width: 520px) {
+    .image-box, .image-box img {
+        width: 400px;
+    }
+}
+
+@media (max-width: 420px) {
+    .image-box, .image-box img {
+        width: 300px;
+    }
+}
+
+@media (max-width: 320px) {
+    .image-box, .image-box img {
+        width: 260px;
+    }
+}
