@@ -175,16 +175,16 @@
 .grow {
     -moz-osx-font-smoothing: grayscale;
     backface-visibility: hidden;
-    transform: translateZ(0);
-    transition: transform .25s ease-out;
 }
 
 .grow:hover, .grow:focus {
     transform: scale(1.05);
+    transition: transform .25s ease-out;
 }
 
 .grow:active {
     transform: scale(.9);
+    transition: transform .25s ease-out;
 }
 
 .pointer:hover {

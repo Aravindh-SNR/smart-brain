@@ -1,17 +1,18 @@
 import React from 'react';
 import './Rank.css';
 
-const Rank = () => {
-    return (
+const Rank = ({user}) => {
+    return user.id ? 
         <div className='rank'>
             <div className='rank-message'>
-                Aravindh, your current rank is ...
+                {`Hi ${user.name}, your current rank is ...`}
             </div>
             <div className='rank-number'>
-                #5
+                {`#${user.entries}`}
             </div>
         </div>
-    );
+        :
+        null;
 };
 
 export default Rank;

@@ -32,6 +32,7 @@ function App() {
   const [imageUrl, setImageUrl] = useState('');
   const [data, setData] = useState({});
   const [styles, setStyles] = useState([]);
+  const [user, setUser] = useState({});
 
   const calculateFaceLocation = (data) => {
     const newStyles = [];
@@ -51,6 +52,23 @@ function App() {
     setStyles(newStyles);
   }
 
+  const updateRank = () => {
+    fetch('http://localhost:8080/image', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        id: user.id
+      })
+    })
+    .then(response => response.json())
+    .then(rank => {
+      setUser({
+        ...user,
+        entries: rank
+      })
+    });
+  }
+
   const handleInputChange = (event) => {
     setInput(event.target.value);
   };
@@ -63,6 +81,7 @@ function App() {
     .then(response => {
       setData(response);
       calculateFaceLocation(response);
+      input !== imageUrl && updateRank();
     })
     .catch(error => {
       console.log(error);
@@ -73,17 +92,24 @@ function App() {
     document.getElementsByClassName('face-box').length && calculateFaceLocation(data);
   };
 
+  const handleSignOut = () => {
+    setInput('');
+    setImageUrl('');
+    setData({});
+    setStyles([]);
+  };
+
   return (
     <BrowserRouter>
       <div className="App">
         <Particles className='particles' params={particlesOptions}/>
-        <Route component={Navigation}/>
-        <Route exact path='/' component={SignIn}/>
-        <Route exact path='/signup' component={SignUp}/>
+        <Route render={props => <Navigation {...props} handleSignOut={handleSignOut}/>}/>
+        <Route exact path='/' render={(props) => <SignIn {...props} setUser={setUser}/>}/>
+        <Route exact path='/signup' render={() => <SignUp setUser={setUser}/>}/>
         <Route exact path='/home' render={() =>
           <Fragment>
             <Logo/>
-            <Rank/>
+            <Rank user={user}/>
             <ImageLinkForm handleInputChange={handleInputChange} handleSubmit={handleSubmit}/>
             <FaceRecognition imageUrl={imageUrl} styles={styles}/>
           </Fragment>

@@ -4,11 +4,12 @@ import './Navigation.css'
 
 const Navigation = (props) => {
     const {pathname} = props.location;
+    const {handleSignOut} = props;
     
     return (
         <nav className='top-nav'>
             {pathname === '/home' ? 
-            <Link to='/' className='sign-in-out pointer'>Sign out</Link>
+            <Link to='/' className='sign-in-out pointer' onClick={handleSignOut}>Sign out</Link>
             :
             <Fragment>
                 <Link to='/' className='sign-in-out pointer'>Sign in</Link>
