@@ -4,7 +4,7 @@ import './App.css';
 import Navigation from './components/navigation/Navigation';
 import Logo from './components/logo/Logo';
 import ImageLinkForm from './components/image_link_form/ImageLinkForm';
-import Rank from './components/rank/Rank';
+import Score from './components/score/Score';
 import FaceRecognition from './components/face_recognition/FaceRecognition';
 import Particles from 'react-particles-js';
 import Clarifai from 'clarifai';
@@ -52,7 +52,7 @@ function App() {
     setStyles(newStyles);
   }
 
-  const updateRank = () => {
+  const updateScore = () => {
     fetch('http://localhost:8080/image', {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
@@ -61,10 +61,10 @@ function App() {
       })
     })
     .then(response => response.json())
-    .then(rank => {
+    .then(entries => {
       setUser({
         ...user,
-        entries: rank
+        entries
       })
     });
   }
@@ -81,7 +81,7 @@ function App() {
     .then(response => {
       setData(response);
       calculateFaceLocation(response);
-      input !== imageUrl && updateRank();
+      input !== imageUrl && updateScore();
     })
     .catch(error => {
       console.log(error);
@@ -109,7 +109,7 @@ function App() {
         <Route exact path='/home' render={() =>
           <Fragment>
             <Logo/>
-            <Rank user={user}/>
+            <Score user={user}/>
             <ImageLinkForm handleInputChange={handleInputChange} handleSubmit={handleSubmit}/>
             <FaceRecognition imageUrl={imageUrl} styles={styles}/>
           </Fragment>
