@@ -21,7 +21,7 @@ const particlesOptions = {
       value: 100,
       density: {
         enable: true,
-        value_area: 600
+        value_area: 800
       }
     }
   }
@@ -110,7 +110,7 @@ function App() {
           <Fragment>
             <Logo/>
             <Score user={user}/>
-            <ImageLinkForm handleInputChange={handleInputChange} handleSubmit={handleSubmit}/>
+            <ImageLinkForm input={input} handleInputChange={handleInputChange} handleSubmit={handleSubmit}/>
             <FaceRecognition imageUrl={imageUrl} styles={styles}/>
           </Fragment>
         }/>

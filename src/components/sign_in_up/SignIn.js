@@ -55,7 +55,7 @@ const SignIn = (props) => {
                         <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign in"/>
                     </div>
                     <div className="lh-copy mt3">
-                    <Link to='/signup' className="f6 link dim black db">Sign up</Link>
+                        <Link to='/signup' className="f6 link dim black db">Sign up</Link>
                     </div>
                     {status === 'failure' && <div>
                         <p>Incorrect credentials, please try again.</p>
