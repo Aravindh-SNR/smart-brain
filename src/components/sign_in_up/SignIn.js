@@ -5,7 +5,7 @@ import './SignInUp.css';
 const SignIn = (props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [status, setStatus] = useState('');
+    const [failureMessage, setFailureMessage] = useState('');
 
     const handleEmailInput = (event) => {
         setEmail(event.target.value);
@@ -16,7 +16,8 @@ const SignIn = (props) => {
     };
 
     const handleSubmit = () => {
-        /^.+@.+\..+$/.test(email) && password && fetch('http://localhost:8080/signin', {
+        /^.+@.+\..+$/.test(email) && password.trim().length ?
+        fetch('http://localhost:8080/signin', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -25,15 +26,17 @@ const SignIn = (props) => {
             })
         })
         .then(response => response.json())
-        .then(user => {
-            if(user.id) {
-                props.setUser(user);
-                setStatus('success');
+        .then(data => {
+            if(data.id) {
+                props.setUser(data);
+                failureMessage && setFailureMessage('');
                 props.history.push('/home');
             } else {
-                setStatus('failure');
+                setFailureMessage(data);
             }
-        });
+        })
+        :
+        setFailureMessage('Please enter valid details.');
     };
 
     return (
@@ -57,8 +60,8 @@ const SignIn = (props) => {
                     <div className="lh-copy mt3">
                         <Link to='/signup' className="f6 link dim black db">Sign up</Link>
                     </div>
-                    {status === 'failure' && <div>
-                        <p>Incorrect credentials, please try again.</p>
+                    {failureMessage && <div>
+                        <p className='failure-message'>{failureMessage}</p>
                     </div>}
                 </div>
             </main>

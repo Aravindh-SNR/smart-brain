@@ -8,7 +8,7 @@ const ImageLinkForm = ({input, handleInputChange, handleSubmit}) => {
             <div className='form'>
                 <div className='form-content'>
                     <input type="text" onChange={handleInputChange} placeholder='Please enter an image URL'/>
-                    <button className='pointer' onClick={() => {input && handleSubmit()}}>Detect</button>
+                    <button className='pointer' onClick={() => {input.trim() && handleSubmit()}}>Detect</button>
                 </div>
             </div>
         </div>

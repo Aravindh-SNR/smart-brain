@@ -3,6 +3,13 @@
     justify-content: flex-end;
 }
 
+.site-heading {
+    flex-grow: 1;
+    font-size: 600;
+    text-align: left;
+    padding-left: 26px;
+}
+
 .sign-in-out {
     padding-top: 20px;
     padding-right: 20px;

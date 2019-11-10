@@ -1,5 +1,5 @@
 import React, {useState, Fragment} from 'react';
-import {BrowserRouter, Route} from 'react-router-dom';
+import {BrowserRouter, Route, Redirect} from 'react-router-dom';
 import './App.css';
 import Navigation from './components/navigation/Navigation';
 import Logo from './components/logo/Logo';
@@ -34,10 +34,10 @@ function App() {
   const [styles, setStyles] = useState([]);
   const [user, setUser] = useState({});
 
-  const calculateFaceLocation = (data) => {
+  const calculateFaceLocation = (regions) => {
     const newStyles = [];
 
-    data.outputs[0].data.regions.forEach(region => {
+    regions.forEach(region => {
       const coordinates = region.region_info.bounding_box;
       const image = document.getElementById('input-image');
 
@@ -52,12 +52,13 @@ function App() {
     setStyles(newStyles);
   }
 
-  const updateScore = () => {
+  const updateScore = (numberOfFaces) => {
     fetch('http://localhost:8080/image', {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        id: user.id
+        id: user.id,
+        score: numberOfFaces
       })
     })
     .then(response => response.json())
@@ -65,7 +66,7 @@ function App() {
       setUser({
         ...user,
         entries
-      })
+      });
     });
   }
 
@@ -79,13 +80,14 @@ function App() {
 
     app.models.predict(Clarifai.FACE_DETECT_MODEL, input)
     .then(response => {
-      setData(response);
-      calculateFaceLocation(response);
-      input !== imageUrl && updateScore();
+      const {regions} = response.outputs[0].data;
+      if(regions) {
+        setData(regions);
+        calculateFaceLocation(regions);
+        updateScore(regions.length);
+      }
     })
-    .catch(error => {
-      console.log(error);
-    });
+    .catch(error => {});
   };
 
   window.onresize = () => {
@@ -105,14 +107,17 @@ function App() {
         <Particles className='particles' params={particlesOptions}/>
         <Route render={props => <Navigation {...props} handleSignOut={handleSignOut}/>}/>
         <Route exact path='/' render={(props) => <SignIn {...props} setUser={setUser}/>}/>
-        <Route exact path='/signup' render={() => <SignUp setUser={setUser}/>}/>
+        <Route exact path='/signup' render={(props) => <SignUp {...props} setUser={setUser}/>}/>
         <Route exact path='/home' render={() =>
+          user.id ?
           <Fragment>
             <Logo/>
             <Score user={user}/>
             <ImageLinkForm input={input} handleInputChange={handleInputChange} handleSubmit={handleSubmit}/>
             <FaceRecognition imageUrl={imageUrl} styles={styles}/>
           </Fragment>
+          :
+          <Redirect to='/'/>
         }/>
       </div>
     </BrowserRouter>

@@ -2,10 +2,11 @@ import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import './SignInUp.css';
 
-const SignUp = ({setUser}) => {
+const SignUp = (props) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [failureMessage, setFailureMessage] = useState('');
 
     const handleNameChange = (event) => {
         setName(event.target.value);
@@ -20,7 +21,8 @@ const SignUp = ({setUser}) => {
     };
 
     const handleSubmit = () => {
-        name && /^.+@.+\..+$/.test(email) && password && fetch('http://localhost:8080/signup', {
+        name.trim().length && /^.+@.+\..+$/.test(email) && password.trim().length ?
+        fetch('http://localhost:8080/signup', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -30,9 +32,17 @@ const SignUp = ({setUser}) => {
             })
         })
         .then(response => response.json())
-        .then(user => {
-            setUser(user);
-        });
+        .then(data => {
+            if(data.id) {
+                props.setUser(data);
+                failureMessage && setFailureMessage('');
+                props.history.push('/home');
+            } else {
+                setFailureMessage(data);
+            }
+        })
+        :
+        setFailureMessage('Please enter valid details.');
     };
 
     return (
@@ -55,13 +65,14 @@ const SignUp = ({setUser}) => {
                     </div>
                     </fieldset>
                     <div className="" onClick={handleSubmit}>
-                        <Link to={name && /^.+@.+\..+$/.test(email) && password ? '/home' : '#'}>
-                            <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign up"/>
-                        </Link>
+                        <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign up"/>
                     </div>
                     <div className="lh-copy mt3">
-                    <Link to='/' className="f6 link dim black db">Sign in</Link>
+                        <Link to='/' className="f6 link dim black db">Sign in</Link>
                     </div>
+                    {failureMessage && <div>
+                        <p className='failure-message'>{failureMessage}</p>
+                    </div>}
                 </div>
             </main>
         </article>

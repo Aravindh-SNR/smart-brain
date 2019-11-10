@@ -8,6 +8,7 @@ const Navigation = (props) => {
     
     return (
         <nav className='top-nav'>
+            <h1 className='site-heading'>Smart Brain</h1>
             {pathname === '/home' ? 
             <Link to='/' className='sign-in-out pointer' onClick={handleSignOut}>Sign out</Link>
             :
