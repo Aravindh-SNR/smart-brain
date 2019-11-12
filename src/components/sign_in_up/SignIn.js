@@ -1,42 +1,62 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import './SignInUp.css';
+import Modal from '../modal/Modal';
 
+//Component for displaying the sign in form and performing sign in
 const SignIn = (props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [failureMessage, setFailureMessage] = useState('');
 
+    //Listener to capture the input entered for email
     const handleEmailInput = (event) => {
         setEmail(event.target.value);
     };
 
+    //Listener to capture the input entered for password
     const handlePasswordInput = (event) => {
         setPassword(event.target.value);
     };
 
     const handleSubmit = () => {
-        /^.+@.+\..+$/.test(email) && password.trim().length ?
-        fetch('http://localhost:8080/signin', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                email,
-                password
+        //Checking the email format and password length
+        if(/^.+@.+\..+$/.test(email) && password.trim().length) {
+            //Making a request to the server to sign in the user
+            fetch('http://localhost:8080/signin', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email,
+                    password
+                })
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.id) {
-                props.setUser(data);
-                failureMessage && setFailureMessage('');
-                props.history.push('/home');
-            } else {
-                setFailureMessage(data);
+            .then(response => response.json())
+            .then(data => {
+                if(data.id) {
+                    //If the response has a user object, we store it in React as well as the browser memory
+                    //and take the user to home (profile) screen
+                    props.setUser(data);
+                    localStorage.setItem('user', JSON.stringify(data));
+                    failureMessage && setFailureMessage('');
+                    props.history.push('/home');
+                } else {
+                    //displaying the error message received from the server in the absence of a user object
+                    setFailureMessage(data);
+                    const modal = document.getElementById('modal');
+                    if(modal) {
+                        modal.style.display = 'block';
+                    }
+                }
+            });
+        } else {
+            //displaying an error message if the inputs entered are not valid
+            setFailureMessage('Please enter valid details in all the fields.');
+            const modal = document.getElementById('modal');
+            if(modal) {
+                modal.style.display = 'block';
             }
-        })
-        :
-        setFailureMessage('Please enter valid details.');
+        }
     };
 
     return (
@@ -60,9 +80,7 @@ const SignIn = (props) => {
                     <div className="lh-copy mt3">
                         <Link to='/signup' className="f6 link dim black db">Sign up</Link>
                     </div>
-                    {failureMessage && <div>
-                        <p className='failure-message'>{failureMessage}</p>
-                    </div>}
+                    {failureMessage && <Modal message={failureMessage}/>}
                 </div>
             </main>
         </article>

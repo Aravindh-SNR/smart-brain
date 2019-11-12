@@ -3,6 +3,7 @@ import Tilt from 'react-tilt';
 import './Logo.css';
 import brain from './brain.png';
 
+//Component for displaying the logo in the user page
 const Logo = () => {
     return (
         <div>

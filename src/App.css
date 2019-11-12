@@ -6,6 +6,7 @@
   cursor: pointer;
 }
 
+/* styles for the component provided by the particles.js library */
 .particles {
   position: fixed;
   top: 0;

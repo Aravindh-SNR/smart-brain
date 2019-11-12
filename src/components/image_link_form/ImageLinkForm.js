@@ -1,6 +1,7 @@
 import React from 'react';
 import './ImageLinkForm.css';
 
+//Component for inputting the image URL
 const ImageLinkForm = ({input, handleInputChange, handleSubmit}) => {
     return (
         <div>

@@ -11,17 +11,31 @@ import Clarifai from 'clarifai';
 import SignIn from './components/sign_in_up/SignIn';
 import SignUp from './components/sign_in_up/SignUp';
 
+//Clarifai face detection API
 const app = new Clarifai.App({
   apiKey: 'cd4860e13055414f86801071d4050504'
  });
 
+//options for the particles provided by particles.js library
 const particlesOptions = {
   particles: {
     number: {
       value: 100,
       density: {
         enable: true,
-        value_area: 800
+        value_area: 700
+      }
+    },
+    move: {
+      speed: 6
+    }
+  },
+  interactivity: {
+    detect_on: 'window',
+    events: {
+      onhover: {
+        enable: true,
+        mode: ['repulse']
       }
     }
   }
@@ -32,11 +46,14 @@ function App() {
   const [imageUrl, setImageUrl] = useState('');
   const [data, setData] = useState({});
   const [styles, setStyles] = useState([]);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {});
+  const [urlMessage, setUrlMessage] = useState('');
 
+  //Function to calculate face locations based on the data received from the API
   const calculateFaceLocation = (regions) => {
     const newStyles = [];
 
+    //Number of faces would be equal to the number of objects in the regions array
     regions.forEach(region => {
       const coordinates = region.region_info.bounding_box;
       const image = document.getElementById('input-image');
@@ -50,8 +67,9 @@ function App() {
     });
 
     setStyles(newStyles);
-  }
+  };
 
+  //Function to request the server to increment the entries of the user by the number of faces detected
   const updateScore = (numberOfFaces) => {
     fetch('http://localhost:8080/image', {
       method: 'PUT',
@@ -67,13 +85,20 @@ function App() {
         ...user,
         entries
       });
+      localStorage.setItem('user', JSON.stringify({
+        ...user,
+        entries
+      }));
     });
-  }
-
-  const handleInputChange = (event) => {
-    setInput(event.target.value);
   };
 
+  //Listener to capture the input entered for the image URL
+  const handleInputChange = (event) => {
+    setInput(event.target.value.trim());
+  };
+
+  //Function to make a request to the API and then invoke calculateFaceLocation function
+  //with the data received from the API
   const handleSubmit = () => {
     setImageUrl(input);
     setStyles([]);
@@ -86,19 +111,27 @@ function App() {
         calculateFaceLocation(regions);
         updateScore(regions.length);
       }
+      urlMessage && setUrlMessage('');
     })
-    .catch(error => {});
+    .catch(error => {
+      //displaying an error message if the image URL entered is invalid
+      setUrlMessage('Please enter a valid image URL.');
+      const modal = document.getElementById('modal');
+        if(modal) {
+            modal.style.display = 'block';
+        }
+    });
   };
 
+  //Updating face locations when the window is resized
   window.onresize = () => {
     document.getElementsByClassName('face-box').length && calculateFaceLocation(data);
   };
 
+  //Emptying the user object and removing it from the browser memory when the user signs out
   const handleSignOut = () => {
-    setInput('');
-    setImageUrl('');
-    setData({});
-    setStyles([]);
+    setUser({});
+    localStorage.removeItem('user');
   };
 
   return (
@@ -106,19 +139,22 @@ function App() {
       <div className="App">
         <Particles className='particles' params={particlesOptions}/>
         <Route render={props => <Navigation {...props} handleSignOut={handleSignOut}/>}/>
-        <Route exact path='/' render={(props) => <SignIn {...props} setUser={setUser}/>}/>
-        <Route exact path='/signup' render={(props) => <SignUp {...props} setUser={setUser}/>}/>
-        <Route exact path='/home' render={() =>
-          user.id ?
+        <Route exact path='/' render={
+          props => user.id ? <Redirect to='/home'/> : <SignIn {...props} setUser={setUser}/>
+          }/>
+        <Route exact path='/signup' render={
+          props => user.id ? <Redirect to='/home'/> : <SignUp {...props} setUser={setUser}/>
+          }/>
+        <Route exact path='/home' render={
+          () => user.id ?
           <Fragment>
             <Logo/>
             <Score user={user}/>
             <ImageLinkForm input={input} handleInputChange={handleInputChange} handleSubmit={handleSubmit}/>
-            <FaceRecognition imageUrl={imageUrl} styles={styles}/>
+            <FaceRecognition imageUrl={imageUrl} styles={styles} urlMessage={urlMessage}/>
           </Fragment>
           :
-          <Redirect to='/'/>
-        }/>
+          <Redirect to='/'/>}/>
       </div>
     </BrowserRouter>
   );
