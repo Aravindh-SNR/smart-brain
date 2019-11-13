@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import './Navigation.css'
 
 //Component for displaying Sign in, Sign up and Sign out links
-const Navigation = (props) => {
+const Navigation = props => {
     const {pathname} = props.location;
     const {handleSignOut} = props;
     

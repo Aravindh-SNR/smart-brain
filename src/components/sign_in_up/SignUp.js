@@ -4,24 +4,24 @@ import './SignInUp.css';
 import Modal from '../modal/Modal';
 
 //Component for displaying the sign up form and performing sign up
-const SignUp = (props) => {
+const SignUp = props => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [failureMessage, setFailureMessage] = useState('');
 
     //Listener to capture the input entered for name
-    const handleNameChange = (event) => {
+    const handleNameChange = event => {
         setName(event.target.value);
     };
 
     //Listener to capture the input entered for email
-    const handleEmailChange = (event) => {
+    const handleEmailChange = event => {
         setEmail(event.target.value);
     };
 
     //Listener to capture the input entered for password
-    const handlePasswordChange = (event) => {
+    const handlePasswordChange = event => {
         setPassword(event.target.value);
     };
 
@@ -45,7 +45,6 @@ const SignUp = (props) => {
                     //and take the user to home (profile) screen
                     props.setUser(data);
                     localStorage.setItem('user', JSON.stringify(data));
-                    failureMessage && setFailureMessage('');
                     props.history.push('/home');
                 } else {
                     //displaying the error message received from the server in the absence of a user object

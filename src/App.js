@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from 'react';
+import React, {useState, useEffect, Fragment} from 'react';
 import {BrowserRouter, Route, Redirect} from 'react-router-dom';
 import './App.css';
 import Navigation from './components/navigation/Navigation';
@@ -7,14 +7,8 @@ import ImageLinkForm from './components/image_link_form/ImageLinkForm';
 import Score from './components/score/Score';
 import FaceRecognition from './components/face_recognition/FaceRecognition';
 import Particles from 'react-particles-js';
-import Clarifai from 'clarifai';
 import SignIn from './components/sign_in_up/SignIn';
 import SignUp from './components/sign_in_up/SignUp';
-
-//Clarifai face detection API
-const app = new Clarifai.App({
-  apiKey: 'cd4860e13055414f86801071d4050504'
- });
 
 //options for the particles provided by particles.js library
 const particlesOptions = {
@@ -49,8 +43,23 @@ function App() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {});
   const [urlMessage, setUrlMessage] = useState('');
 
-  //Function to calculate face locations based on the data received from the API
-  const calculateFaceLocation = (regions) => {
+  //This useEffect hook is to make sure that the user's latest entry count is displayed irrespective
+  //of the browser used because the details retrieved from localStorage may not be up-to-date
+  //in case the user uses different browsers simultaneously without signing out
+  useEffect(() => {
+    JSON.parse(localStorage.getItem('user')) && user.id && fetch(`http://localhost:8080/profile/${user.id}`, {
+      method: 'GET',
+      headers: {'Content-Type': 'application/json'}
+    })
+    .then(response => response.json())
+    .then(user => {
+      setUser(user);
+      localStorage.setItem('user', JSON.stringify(user));
+    });
+  }, [user.id]);
+
+  //Function to calculate dimensions for the face boxes based on the data received from the server
+  const calculateFaceLocation = regions => {
     const newStyles = [];
 
     //Number of faces would be equal to the number of objects in the regions array
@@ -70,7 +79,7 @@ function App() {
   };
 
   //Function to request the server to increment the entries of the user by the number of faces detected
-  const updateScore = (numberOfFaces) => {
+  const updateScore = numberOfFaces => {
     fetch('http://localhost:8080/image', {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
@@ -93,33 +102,47 @@ function App() {
   };
 
   //Listener to capture the input entered for the image URL
-  const handleInputChange = (event) => {
+  const handleInputChange = event => {
     setInput(event.target.value.trim());
   };
 
-  //Function to make a request to the API and then invoke calculateFaceLocation function
-  //with the data received from the API
+  //Function to request the server for face data
   const handleSubmit = () => {
     setImageUrl(input);
     setStyles([]);
 
-    app.models.predict(Clarifai.FACE_DETECT_MODEL, input)
-    .then(response => {
-      const {regions} = response.outputs[0].data;
-      if(regions) {
-        setData(regions);
-        calculateFaceLocation(regions);
-        updateScore(regions.length);
-      }
-      urlMessage && setUrlMessage('');
+    fetch('http://localhost:8080/detectface', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        input
+      })
     })
-    .catch(error => {
-      //displaying an error message if the image URL entered is invalid
-      setUrlMessage('Please enter a valid image URL.');
-      const modal = document.getElementById('modal');
+    .then(response => response.json())
+    .then(response => {
+      if(response.outputs) {
+        const {regions} = response.outputs[0].data;
+        //the 'regions' object has the face coordinates
+        if(regions) {
+          setData(regions);
+          calculateFaceLocation(regions);
+          updateScore(regions.length);
+          urlMessage && setUrlMessage('');
+        } else {
+          setUrlMessage('No faces were detected in the picture. Try another one.');
+          const modal = document.getElementById('modal');
+          if(modal) {
+              modal.style.display = 'block';
+          }
+        }
+      } else {
+        //displaying an error message if the image URL entered is invalid
+        setUrlMessage(response);
+        const modal = document.getElementById('modal');
         if(modal) {
             modal.style.display = 'block';
         }
+      }
     });
   };
 
@@ -130,7 +153,12 @@ function App() {
 
   //Emptying the user object and removing it from the browser memory when the user signs out
   const handleSignOut = () => {
+    setInput('');
+    setImageUrl('');
+    setData({});
+    setStyles([]);
     setUser({});
+    setUrlMessage('');
     localStorage.removeItem('user');
   };
 

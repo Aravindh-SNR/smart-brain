@@ -4,18 +4,18 @@ import './SignInUp.css';
 import Modal from '../modal/Modal';
 
 //Component for displaying the sign in form and performing sign in
-const SignIn = (props) => {
+const SignIn = props => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [failureMessage, setFailureMessage] = useState('');
 
     //Listener to capture the input entered for email
-    const handleEmailInput = (event) => {
+    const handleEmailInput = event => {
         setEmail(event.target.value);
     };
 
     //Listener to capture the input entered for password
-    const handlePasswordInput = (event) => {
+    const handlePasswordInput = event => {
         setPassword(event.target.value);
     };
 
@@ -38,7 +38,6 @@ const SignIn = (props) => {
                     //and take the user to home (profile) screen
                     props.setUser(data);
                     localStorage.setItem('user', JSON.stringify(data));
-                    failureMessage && setFailureMessage('');
                     props.history.push('/home');
                 } else {
                     //displaying the error message received from the server in the absence of a user object

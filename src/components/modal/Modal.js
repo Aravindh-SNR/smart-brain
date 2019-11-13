@@ -9,12 +9,12 @@ const Modal = ({message}) => {
     };
 
     //Close the modal when a click is made anywhere in the window outside the modal-content
-    window.onclick = (event) => {
+    window.onclick = event => {
         const modal = document.getElementById('modal');
         if(event.target === modal) {
             modal.style.display = 'none';
         }
-    }
+    };
 
     return (
         <div id='modal'>
