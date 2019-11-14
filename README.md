@@ -2,7 +2,7 @@ Smart Brain is a single page web application that detects faces in pictures with
 
 The tech stack used is:
 - React in the frontend
-- Node and Express in the backend
+- Node and Express in the backend ([This repository](https://github.com/Aravindh-SNR/smart-brain-api) has the source code of the backend)
 - PostgreSQL as database
 
 To run the app locally,
