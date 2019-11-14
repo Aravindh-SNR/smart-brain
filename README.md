@@ -1,4 +1,5 @@
 Smart Brain is a single page web application that detects faces in pictures with the help of Clarifai API.
+Check the app live at https://smart-brain-app.netlify.com
 
 The tech stack used is:
 - React in the frontend
