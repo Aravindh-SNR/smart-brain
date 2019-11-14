@@ -29,7 +29,7 @@ const SignUp = props => {
         //Checking the name length, email format and password length
         if(name.trim().length && /^.+@.+\..+$/.test(email) && password.trim().length) {
             //Making a request to the server to create the user
-            fetch('http://localhost:8080/signup', {
+            fetch('https://damp-basin-62791.herokuapp.com/signup', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({

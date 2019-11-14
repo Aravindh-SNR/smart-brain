@@ -23,7 +23,7 @@ const SignIn = props => {
         //Checking the email format and password length
         if(/^.+@.+\..+$/.test(email) && password.trim().length) {
             //Making a request to the server to sign in the user
-            fetch('http://localhost:8080/signin', {
+            fetch('https://damp-basin-62791.herokuapp.com/signin', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({

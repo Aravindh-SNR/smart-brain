@@ -47,7 +47,7 @@ function App() {
   //of the browser used because the details retrieved from localStorage may not be up-to-date
   //in case the user uses different browsers simultaneously without signing out
   useEffect(() => {
-    localStorage.getItem('user') && user.id && fetch(`http://localhost:8080/profile/${user.id}`, {
+    localStorage.getItem('user') && user.id && fetch(`https://damp-basin-62791.herokuapp.com/profile/${user.id}`, {
       method: 'GET',
       headers: {'Content-Type': 'application/json'}
     })
@@ -80,7 +80,7 @@ function App() {
 
   //Function to request the server to increment the entries of the user by the number of faces detected
   const updateScore = numberOfFaces => {
-    fetch('http://localhost:8080/image', {
+    fetch('https://damp-basin-62791.herokuapp.com/image', {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -111,7 +111,7 @@ function App() {
     setImageUrl(input);
     setStyles([]);
 
-    fetch('http://localhost:8080/detectface', {
+    fetch('https://damp-basin-62791.herokuapp.com/detectface', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
