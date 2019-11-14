@@ -9,7 +9,12 @@ const ImageLinkForm = ({input, handleInputChange, handleSubmit}) => {
             <div className='form'>
                 <div className='form-content'>
                     <input type="text" onChange={handleInputChange} placeholder='Please enter an image URL'/>
-                    <button className='pointer' onClick={() => {input.trim() && handleSubmit()}}>Detect</button>
+                    <button className='pointer' onClick={() => {
+                        //If the app is open in two different tabs/windows and the user has signed out
+                        //in one of the tabs/windows, they will be signed out in the other tab/window as well
+                        //when they click on the Detect button
+                        localStorage.getItem('user') ? input.trim() && handleSubmit() : document.location.reload();
+                    }}>Detect</button>
                 </div>
             </div>
         </div>

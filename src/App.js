@@ -47,7 +47,7 @@ function App() {
   //of the browser used because the details retrieved from localStorage may not be up-to-date
   //in case the user uses different browsers simultaneously without signing out
   useEffect(() => {
-    JSON.parse(localStorage.getItem('user')) && user.id && fetch(`http://localhost:8080/profile/${user.id}`, {
+    localStorage.getItem('user') && user.id && fetch(`http://localhost:8080/profile/${user.id}`, {
       method: 'GET',
       headers: {'Content-Type': 'application/json'}
     })
