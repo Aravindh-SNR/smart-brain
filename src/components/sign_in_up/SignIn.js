@@ -1,13 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import './SignInUp.css';
 import Modal from '../modal/Modal';
+import Loading from '../loading_animation/Loading';
 
 //Component for displaying the sign in form and performing sign in
 const SignIn = props => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [failureMessage, setFailureMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     //Listener to capture the input entered for email
     const handleEmailInput = event => {
@@ -22,6 +24,8 @@ const SignIn = props => {
     const handleSubmit = () => {
         //Checking the email format and password length
         if(/^.+@.+\..+$/.test(email) && password.trim().length) {
+            //displaying the loading animation since we are about to make an asynchronous request
+            setIsLoading(true);
             //Making a request to the server to sign in the user
             fetch('https://damp-basin-62791.herokuapp.com/signin', {
                 method: 'POST',
@@ -33,6 +37,7 @@ const SignIn = props => {
             })
             .then(response => response.json())
             .then(data => {
+                setIsLoading(false);
                 if(data.id) {
                     //If the response has a user object, we store it in React as well as the browser memory
                     //and take the user to home (profile) screen
@@ -59,30 +64,33 @@ const SignIn = props => {
     };
 
     return (
-        <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
-            <main className="pa4 black-80">
-                <div className="measure">
-                    <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
-                    <legend className="f2 fw6 ph0 mh0">Sign In</legend>
-                    <div className="mt3">
-                        <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
-                        <input onChange={handleEmailInput} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="email" name="email-address"  id="email-address" placeholder='anything@anything.anything'/>
+        <Fragment>
+            <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
+                <main className="pa4 black-80">
+                    <div className="measure">
+                        <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
+                        <legend className="f2 fw6 ph0 mh0">Sign In</legend>
+                        <div className="mt3">
+                            <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
+                            <input onChange={handleEmailInput} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="email" name="email-address"  id="email-address" placeholder='anything@anything.anything'/>
+                        </div>
+                        <div className="mv3">
+                            <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
+                            <input onChange={handlePasswordInput} className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="password" name="password"  id="password" placeholder='Password required'/>
+                        </div>
+                        </fieldset>
+                        <div className="" onClick={handleSubmit}>
+                            <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign in"/>
+                        </div>
+                        <div className="lh-copy mt3">
+                            <Link to='/signup' className="f6 link dim black db">Sign up</Link>
+                        </div>
+                        {failureMessage && <Modal message={failureMessage}/>}
                     </div>
-                    <div className="mv3">
-                        <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
-                        <input onChange={handlePasswordInput} className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="password" name="password"  id="password" placeholder='Password required'/>
-                    </div>
-                    </fieldset>
-                    <div className="" onClick={handleSubmit}>
-                        <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign in"/>
-                    </div>
-                    <div className="lh-copy mt3">
-                        <Link to='/signup' className="f6 link dim black db">Sign up</Link>
-                    </div>
-                    {failureMessage && <Modal message={failureMessage}/>}
-                </div>
-            </main>
-        </article>
+                </main>
+            </article>
+            {isLoading && <Loading/>}
+        </Fragment>
     );
 };
 
