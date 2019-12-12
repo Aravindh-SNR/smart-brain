@@ -79,11 +79,11 @@ const SignUp = props => {
                         <legend className="f2 fw6 ph0 mh0">Sign Up</legend>
                         <div className="mt3">
                             <label className="db fw6 lh-copy f6" htmlFor="name">Name</label>
-                            <input onChange={handleNameChange} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="email" name="name"  id="name" placeholder='Name required'/>
+                            <input autoComplete="off" autoFocus onChange={handleNameChange} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="email" name="name"  id="name" placeholder='Name required'/>
                         </div>
                         <div className="mt3">
                             <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
-                            <input onChange={handleEmailChange} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="email" name="email-address"  id="email-address" placeholder='anything@anything.anything'/>
+                            <input autoComplete="off" onChange={handleEmailChange} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="email" name="email-address"  id="email-address" placeholder='anything@anything.anything'/>
                         </div>
                         <div className="mv3">
                             <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
