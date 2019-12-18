@@ -7,8 +7,7 @@ import ImageLinkForm from './components/image_link_form/ImageLinkForm';
 import Score from './components/score/Score';
 import FaceRecognition from './components/face_recognition/FaceRecognition';
 import Particles from 'react-particles-js';
-import SignIn from './components/sign_in_up/SignIn';
-import SignUp from './components/sign_in_up/SignUp';
+import SignInUp from './components/sign_in_up/SignInUp';
 
 //options for the particles provided by particles.js library
 const particlesOptions = {
@@ -168,10 +167,10 @@ function App() {
         <Particles className='particles' params={particlesOptions}/>
         <Route render={props => <Navigation {...props} handleSignOut={handleSignOut}/>}/>
         <Route exact path='/' render={
-          props => user.id ? <Redirect to='/home'/> : <SignIn {...props} setUser={setUser}/>
+          props => user.id ? <Redirect to='/home'/> : <SignInUp {...props} setUser={setUser} view='signin'/>
           }/>
         <Route exact path='/signup' render={
-          props => user.id ? <Redirect to='/home'/> : <SignUp {...props} setUser={setUser}/>
+          props => user.id ? <Redirect to='/home'/> : <SignInUp {...props} setUser={setUser} view='signup'/>
           }/>
         <Route exact path='/home' render={
           () => user.id ?
@@ -183,6 +182,8 @@ function App() {
           </Fragment>
           :
           <Redirect to='/'/>}/>
+          {/* Handle invalid URLs/routes */}
+          <Route render={() => <Redirect to={user.id ? '/home' : '/'}/>}/>
       </div>
     </BrowserRouter>
   );

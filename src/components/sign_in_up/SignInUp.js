@@ -4,36 +4,50 @@ import './SignInUp.css';
 import Modal from '../modal/Modal';
 import Loading from '../loading_animation/Loading';
 
-//Component for displaying the sign in form and performing sign in
-const SignIn = props => {
+//Component for displaying and performing sign-in/sign-up
+const SignInUp = props => {
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [failureMessage, setFailureMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    //Listener to capture the input entered for name
+    const handleNameChange = event => {
+        setName(event.target.value);
+    };
+
     //Listener to capture the input entered for email
-    const handleEmailInput = event => {
+    const handleEmailChange = event => {
         setEmail(event.target.value);
     };
 
     //Listener to capture the input entered for password
-    const handlePasswordInput = event => {
+    const handlePasswordChange = event => {
         setPassword(event.target.value);
     };
 
     const handleSubmit = () => {
-        //Checking the email format and password length
-        if(/^.+@.+\..+$/.test(email) && password.trim().length) {
+        //Condition to validate email format and password length
+        let condition = /^.+@.+\..+$/.test(email) && password.trim().length;
+
+        //Object that needs to be sent to the server to sign in or sign up user
+        let requestObject = {email, password};
+        
+        //Adding name field to condition and request object if the view is sign up
+        if (props.view === 'signup') {
+            condition = name.trim().length && condition;
+            requestObject = {name, ...requestObject};
+        }
+
+        if(condition) {
             //displaying the loading animation since we are about to make an asynchronous request
             setIsLoading(true);
-            //Making a request to the server to sign in the user
-            fetch('https://damp-basin-62791.herokuapp.com/signin', {
+            //Making a request to the server to create the user
+            fetch(`https://damp-basin-62791.herokuapp.com/${props.view}`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    email,
-                    password
-                })
+                body: JSON.stringify(requestObject)
             })
             .then(response => response.json())
             .then(data => {
@@ -69,21 +83,27 @@ const SignIn = props => {
                 <main className="pa4 black-80">
                     <div className="measure">
                         <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
-                        <legend className="f2 fw6 ph0 mh0">Sign In</legend>
+                        <legend className="f2 fw6 ph0 mh0">{props.view === 'signup' ? 'Sign Up' : 'Sign In'}</legend>
+                        {props.view === 'signup' && 
+                        <div className="mt3">
+                            <label className="db fw6 lh-copy f6" htmlFor="name">Name</label>
+                            <input autoComplete="off" autoFocus onChange={handleNameChange} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="email" name="name"  id="name" placeholder='Name required'/>
+                        </div>
+                        }
                         <div className="mt3">
                             <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
-                            <input autoComplete="off" autoFocus onChange={handleEmailInput} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="email" name="email-address"  id="email-address" placeholder='anything@anything.anything'/>
+                            <input autoComplete="off" onChange={handleEmailChange} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="email" name="email-address"  id="email-address" placeholder='anything@anything.anything'/>
                         </div>
                         <div className="mv3">
                             <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
-                            <input onChange={handlePasswordInput} className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="password" name="password"  id="password" placeholder='Password required'/>
+                            <input onChange={handlePasswordChange} className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="password" name="password"  id="password" placeholder='Password required'/>
                         </div>
                         </fieldset>
-                        <div className="" onClick={handleSubmit}>
-                            <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign in"/>
+                        <div onClick={handleSubmit}>
+                            <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value={props.view === 'signup' ? 'Sign Up' : 'Sign In'}/>
                         </div>
                         <div className="lh-copy mt3">
-                            <Link to='/signup' className="f6 link dim black db">Sign up</Link>
+                            <Link to={props.view === 'signup' ? '/' : '/signup'} className="f6 link dim black db">{props.view === 'signup' ? 'Sign In' : 'Sign Up'}</Link>
                         </div>
                         {failureMessage && <Modal message={failureMessage}/>}
                     </div>
@@ -94,4 +114,4 @@ const SignIn = props => {
     );
 };
 
-export default SignIn;
+export default SignInUp;
