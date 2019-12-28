@@ -13,7 +13,7 @@ import SignInUp from './components/sign_in_up/SignInUp';
 const particlesOptions = {
   particles: {
     number: {
-      value: 75,
+      value: 70,
       density: {
         enable: true,
         value_area: 700
