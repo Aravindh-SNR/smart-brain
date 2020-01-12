@@ -27,7 +27,10 @@ const SignInUp = props => {
         setPassword(event.target.value);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = (event) => {
+        //Prevent the form from getting submitted
+        event.preventDefault();
+
         //Condition to validate email format and password length
         let condition = /^.+@.+\..+$/.test(email) && password.trim().length;
 
@@ -81,32 +84,32 @@ const SignInUp = props => {
         <Fragment>
             <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
                 <main className="pa4 black-80">
-                    <div className="measure">
+                    <form className="measure" onSubmit={handleSubmit}>
                         <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
-                        <legend className="f2 fw6 ph0 mh0">{props.view === 'signup' ? 'Sign Up' : 'Sign In'}</legend>
-                        {props.view === 'signup' && 
-                        <div className="mt3">
-                            <label className="db fw6 lh-copy f6" htmlFor="name">Name</label>
-                            <input autoComplete="off" autoFocus onChange={handleNameChange} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="email" name="name"  id="name" placeholder='Name required'/>
-                        </div>
-                        }
-                        <div className="mt3">
-                            <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
-                            <input autoComplete="off" autoFocus={props.view === 'signin'} onChange={handleEmailChange} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="email" name="email-address"  id="email-address" placeholder='anything@anything.anything'/>
-                        </div>
-                        <div className="mv3">
-                            <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
-                            <input onChange={handlePasswordChange} className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="password" name="password"  id="password" placeholder='Password required'/>
-                        </div>
+                            <legend className="f2 fw6 ph0 mh0">{props.view === 'signup' ? 'Sign Up' : 'Sign In'}</legend>
+                            {props.view === 'signup' && 
+                            <div className="mt3">
+                                <label className="db fw6 lh-copy f6" htmlFor="name">Name</label>
+                                <input autoComplete="off" autoFocus onChange={handleNameChange} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="text" name="name"  id="name" placeholder='Name required'/>
+                            </div>
+                            }
+                            <div className="mt3">
+                                <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
+                                <input autoComplete="off" autoFocus={props.view === 'signin'} onChange={handleEmailChange} className="pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="text" name="email-address"  id="email-address" placeholder='anything@anything.anything'/>
+                            </div>
+                            <div className="mv3">
+                                <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
+                                <input onChange={handlePasswordChange} className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white" type="password" name="password"  id="password" placeholder='Password required'/>
+                            </div>
                         </fieldset>
-                        <div onClick={handleSubmit}>
+                        <div>
                             <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value={props.view === 'signup' ? 'Sign Up' : 'Sign In'}/>
                         </div>
                         <div className="lh-copy mt3">
                             <Link to={props.view === 'signup' ? '/' : '/signup'} className="f6 link dim black db">{props.view === 'signup' ? 'Sign In' : 'Sign Up'}</Link>
                         </div>
                         {failureMessage && <Modal message={failureMessage}/>}
-                    </div>
+                    </form>
                 </main>
             </article>
             {isLoading && <Loading/>}
